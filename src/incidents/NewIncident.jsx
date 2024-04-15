@@ -10,6 +10,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { create as createIncident } from './api-incident.js';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import auth from '../lib/auth-helper.js';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -62,9 +68,54 @@ export default function NewIncident() {
     error: '',
     redirect: false,
   });
+  const [errors, setErrors] = useState({
+    title: '',
+    category: '',
+    severity: '',
+    description: '',
+  });
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
+  };
+
+
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = { ...errors };
+
+    if (!values.title) {
+      newErrors.title = 'Title is required';
+      valid = false;
+    } else {
+      newErrors.title = '';
+    }
+
+    if (!values.category) {
+      newErrors.category = 'Category is required';
+      valid = false;
+    } else {
+      newErrors.category = '';
+    }
+
+    if (!values.severity) {
+      newErrors.severity = 'Severity is required';
+      valid = false;
+    } else {
+      newErrors.severity = '';
+    }
+
+    if (!values.description) {
+      newErrors.description = 'Description is required';
+      valid = false;
+    } else {
+      newErrors.description = '';
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
   const clickSubmit = () => {
@@ -80,6 +131,7 @@ export default function NewIncident() {
         setValues({ ...values, error: data.error });
       } else {
         setValues({ ...values, error: '', redirect: true });
+        setShowConfirmation(true);
       }
       if (data) {
         setValues({
@@ -110,6 +162,9 @@ export default function NewIncident() {
             value={values.title}
             onChange={handleChange('title')}
             margin="normal"
+            error={!!errors.title}
+            helperText={errors.title}
+
           />
           <br />
           <TextField
@@ -119,6 +174,9 @@ export default function NewIncident() {
             value={values.category}
             onChange={handleChange('category')}
             margin="normal"
+            error={!!errors.title}
+            helperText={errors.title}
+
           />
           <br />
           <TextField
@@ -128,6 +186,9 @@ export default function NewIncident() {
             value={values.severity}
             onChange={handleChange('severity')}
             margin="normal"
+            error={!!errors.severity}
+            helperText={errors.severity}
+
           />
           <br />
           <TextField
@@ -138,6 +199,9 @@ export default function NewIncident() {
             onChange={handleChange('description')}
             className={classes.textField}
             margin="normal"
+            error={!!errors.description}
+            helperText={errors.description}
+
           />
           <br />
           {values.error && (
@@ -163,6 +227,22 @@ export default function NewIncident() {
           </Link>
         </CardActions>
       </Card>
+      <Dialog open={showConfirmation} onClose={() => setShowConfirmation(false)}>
+        <DialogTitle>Incident Created</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            The incident has been created successfully.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+        <Link to={auth.isAdmin() ? `/admin/incidents` : `/incidents`}>
+          <Button color="primary" onClick={() => setShowConfirmation(false)} autoFocus>
+            OK
+          </Button>
+          </Link>
+        </DialogActions>
+      </Dialog>
+
     </div>
   );
 }

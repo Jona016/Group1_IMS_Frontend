@@ -1,21 +1,5 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-// import Home from './src/components/Home'
-// import Layout from './src/components/Layout'
-// import PrivateLayout from './components/Layout'
-// import Footer from './src/components/Footer'
-// import Users from './pages/user/Users'
-// import Signup from './pages/user/Signup'
-// import { Container } from '@material-ui/core'
-// import PrivateRoute from './lib/PrivateRoute'
-// import UserLayout from './components/UserLayout'
-// import Login from './pages/user/Login'
-// import NewIncident from './pages/incidents/NewIncident'
-// import IncidentList from './pages/incidents/IncidentList'
-// import DeleteIncident from './pages/incidents/DeleteIncident'
-// import EditIncident from './pages/incidents/EditIncident'
-// import DeleteUser from './pages/user/DeleteUser'
-// import EditProfile from './pages/user/EditProfile'
 import auth from './src/lib/auth-helper';
 import Layout from './src/components/Layout';
 import Signup from './src/users/Signup';

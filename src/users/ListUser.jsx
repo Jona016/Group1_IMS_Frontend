@@ -12,7 +12,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
   import List from "@material-ui/core/List";
-  import { list } from "./api-user.js";
+  import { list, remove} from "./api-user.js";
   import { Link } from "react-router-dom";
   import ListItem from "@material-ui/core/ListItem";
   import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -24,6 +24,12 @@ import EditIcon from "@material-ui/icons/Edit";
   import ArrowForward from "@material-ui/icons/ArrowForward";
   import auth from '../lib/auth-helper.js'
 import EditIncident from "../incidents/EditIncident.jsx";
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,13 +39,11 @@ import EditIncident from "../incidents/EditIncident.jsx";
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
-      // marginTop: "70px"
       alignItems: "center",
-      // justifyContent: "center",
     },
     paper: {
       width: '100%',
-      maxWidth: 800, // Adjust the maximum width of the paper here
+      maxWidth: 800,
       padding: theme.spacing(2),
       backgroundColor: theme.palette.background.paper,
       borderRadius: theme.spacing(1),
@@ -51,6 +55,8 @@ import EditIncident from "../incidents/EditIncident.jsx";
   export default function Users() {
     const [users, setUsers] = useState([]);
     const [redirectToSignin, setRedirectToSignin] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
 
     useEffect(() => {
       const fetchData = async () =>{
@@ -87,6 +93,28 @@ import EditIncident from "../incidents/EditIncident.jsx";
       // };
     }, []);
 
+
+    const deleteUser = async (user) => {
+      try {
+        const jwt = auth.isAuthenticated();
+        const data = await remove(
+          { userId: userToDelete._id }, { t: jwt.token });
+        if (data.error) {
+          console.error(data.error);
+        } else {
+          const updatedUsers = user.filter(
+            (item) => item._id !== userToDelete._id
+          );
+          setUsers(updatedUsers);
+          setUserToDelete(null);
+          setDialogOpen(false);
+  
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const classes = useStyles();
     return (
       <div className={classes.root}>
@@ -100,21 +128,22 @@ import EditIncident from "../incidents/EditIncident.jsx";
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Role</TableCell>
-                <TableCell>Action</TableCell>
+                {/* <TableCell>Action</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
               {users.map((item, i) => (
                 <TableRow key={i}>
-                  <TableCell>{new Date(item.dateCreated).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(item.dateCreated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</TableCell>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.email}</TableCell>
                   <TableCell>{item.role}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <IconButton
                     arial-label="delete"
                     color="secondary"
-                    onClick={() => deleteUser(user)}
+                    onClick={() => {setUserToDelete(item);
+                    setDialogOpen(true);}}
                     >
                       <DeleteIcon />
                       </IconButton>
@@ -128,13 +157,29 @@ import EditIncident from "../incidents/EditIncident.jsx";
                     </IconButton>
                     </Link>
                                         
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Paper>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this user?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={deleteUser} color="secondary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>      
       </div>
     );
   }

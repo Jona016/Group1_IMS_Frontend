@@ -121,12 +121,11 @@ export default function MyProfile() {
         </Typography>
         <List>
           <ListItem>
-            <ListItemAvatar>
+            {/* <ListItemAvatar>
               <Avatar>
-                {/* Display initial letter of the user's name */}
                 {users && users.name && users.name.charAt(0).toUpperCase()}
               </Avatar>
-            </ListItemAvatar>
+            </ListItemAvatar> */}
             <ListItemText primary={`Username: ${users && users.name}`} />
           </ListItem>
           <ListItem>

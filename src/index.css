@@ -66,21 +66,49 @@ body {
 nav {
  height: 60px;
  background-color: #beeafdb6;;
- font-size:x-large;
+ font-size: 20px;
  position: fixed;
  width: 100%;
  top: 0;
 }
 
 .container {
-  max-width: 1100px;
-  margin: 0 auto;
+  margin: 0 20px;
   padding: 0 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 100%;
 }
+
+
+.left-nav {
+  display: flex;
+  align-items: center;
+}
+
+.right-nav {
+  display: flex;
+  margin-left: auto;
+}
+
+.logo {
+  margin-right: 10px;
+}
+
+.navTitle {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  color: black;
+  text-decoration: none;
+}
+
+.navTitle:hover {
+  color: #535bf2;
+  cursor: pointer;
+}
+
 
 footer {
   background-color: #beeafdb6;
